@@ -7,25 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// @id @default(autoincrement())
+
 model User {
-  id             String         @id @default(uuid())
-  age            Int
-  name           String
-  email          String         @unique
-  role           Role           @default(BASIC)
-  writtenPosts   Post[]         @relation("WrittenPosts")
-  favoritePosts  Post[]         @relation("FavoritePosts")
-  userPreference UserPeference?
+  id               String          @id @default(uuid())
+  age              Int
+  name             String
+  email            String          @unique
+  role             Role            @default(BASIC)
+  writtenPosts     Post[]          @relation("WrittenPosts")
+  favoritePosts    Post[]          @relation("FavoritePosts")
+  userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
+  userPreferenceId String          @unique
 
   @@unique([age, name])
   @@index([email])
 }
 
-model UserPeference {
+model UserPreference {
   id           String  @id @default(uuid())
   emailUpdates Boolean
-  user         User    @relation(fields: [userId], references: [id])
-  userId       String  @unique
+  user         User?
 }
 
 // @updatedAt za każdym razem sie updatetuje jak nowy post
