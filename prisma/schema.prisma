@@ -10,51 +10,90 @@ datasource db {
 // @id @default(autoincrement())
 
 model User {
-  id               String          @id @default(uuid())
-  age              Int
-  name             String
-  email            String          @unique
-  role             Role            @default(BASIC)
-  writtenPosts     Post[]          @relation("WrittenPosts")
-  favoritePosts    Post[]          @relation("FavoritePosts")
-  userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
-  userPreferenceId String          @unique
-
-  @@unique([age, name])
-  @@index([email])
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  email    String   @unique
+  password String
+  profile  Profile?
+  Score    Score?
 }
 
-model UserPreference {
-  id           String  @id @default(uuid())
-  emailUpdates Boolean
-  user         User?
+model Words {
+  id       Int    @id @default(autoincrement())
+  PL       String
+  ENG      String
+  // Grupa Grupa
+  groupe   Groupe @relation(fields: [idGroupe], references: [id])
+  idGroupe Int    @unique
 }
 
-// @updatedAt za każdym razem sie updatetuje jak nowy post
-// @default(now())  aktualny czas
-
-model Post {
-  id            String     @id @default(uuid())
-  title         String
-  averageRating Float
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  author        User       @relation("WrittenPosts", fields: [authorId], references: [id])
-  authorId      String
-  favoriteBy    User?      @relation("FavoritePosts", fields: [favoriteById], references: [id])
-  favoriteById  String?
-  categories    Category[]
+model Profile {
+  id        Int    @id @default(autoincrement())
+  user      User   @relation(fields: [userEmail], references: [email])
+  userEmail String @unique
 }
 
-// many to many 
-
-model Category {
-  id    String @id @default(uuid())
+model Groupe {
+  id    Int    @id @default(autoincrement())
   name  String @unique
-  posts Post[]
+  Words Words?
+  Score Score?
 }
 
-enum Role {
-  BASIC
-  ADMIN
+model Score {
+  id      Int    @id @default(autoincrement())
+  groupe  Groupe @relation(fields: [idGrope], references: [id])
+  idGrope Int    @unique
+  users   User   @relation(fields: [idUser], references: [id])
+  idUser  Int    @unique
 }
+
+// model User {
+//   id               String          @id @default(uuid())
+//   age              Int
+//   name             String
+//   email            String          @unique
+//   role             Role            @default(BASIC)
+//   writtenPosts     Post[]          @relation("WrittenPosts")
+//   favoritePosts    Post[]          @relation("FavoritePosts")
+//   userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
+//   userPreferenceId String          @unique
+
+//   @@unique([age, name])
+//   @@index([email])
+// }
+
+// model UserPreference {
+//   id           String  @id @default(uuid())
+//   emailUpdates Boolean
+//   user         User?
+// }
+
+// // @updatedAt za każdym razem sie updatetuje jak nowy post
+// // @default(now())  aktualny czas
+
+// model Post {
+//   id            String     @id @default(uuid())
+//   title         String
+//   averageRating Float
+//   createdAt     DateTime   @default(now())
+//   updatedAt     DateTime   @updatedAt
+//   author        User       @relation("WrittenPosts", fields: [authorId], references: [id])
+//   authorId      String
+//   favoriteBy    User?      @relation("FavoritePosts", fields: [favoriteById], references: [id])
+//   favoriteById  String?
+//   categories    Category[]
+// }
+
+// // many to many 
+
+// model Category {
+//   id    String @id @default(uuid())
+//   name  String @unique
+//   posts Post[]
+// }
+
+// enum Role {
+//   BASIC
+//   ADMIN
+// }
